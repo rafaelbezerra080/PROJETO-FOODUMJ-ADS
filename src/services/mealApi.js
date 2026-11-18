@@ -17,3 +17,24 @@ export async function searchRecipes(query) {
   const data = await response.json();
   return data.meals ?? [];
 }
+
+export async function getRecipeById(id) {
+  const url = `${BASE_URL}/lookup.php?i=${encodeURIComponent(id)}`;
+
+  let response;
+  try {
+    response = await fetch(url);
+  } catch (error) {
+    throw new Error('Falha de conexão. Verifique sua internet e tente novamente.');
+  }
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar a receita (código ${response.status}).`);
+  }
+
+  const data = await response.json();
+  if (!data.meals || data.meals.length === 0) {
+    return null;
+  }
+  return data.meals[0];
+}
