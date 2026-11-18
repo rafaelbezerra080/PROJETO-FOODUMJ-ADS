@@ -11,6 +11,20 @@ import {
 
 import { getRecipeById } from '../services/mealApi';
 
+function extractIngredients(recipe) {
+  const ingredients = [];
+  for (let i = 1; i <= 20; i += 1) {
+    const ingredient = recipe[`strIngredient${i}`];
+    const measure = recipe[`strMeasure${i}`];
+    if (ingredient && ingredient.trim()) {
+      ingredients.push(
+        `${measure && measure.trim() ? `${measure.trim()} ` : ''}${ingredient.trim()}`
+      );
+    }
+  }
+  return ingredients;
+}
+
 export default function RecipeDetailsScreen({ route }) {
   const { idMeal } = route.params;
   const [recipe, setRecipe] = useState(null);
@@ -66,6 +80,12 @@ export default function RecipeDetailsScreen({ route }) {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Image source={{ uri: recipe.strMealThumb }} style={styles.image} />
       <Text style={styles.title}>{recipe.strMeal}</Text>
+      <Text style={styles.sectionTitle}>Ingredientes</Text>
+      {extractIngredients(recipe).map((item) => (
+        <Text key={item} style={styles.ingredient}>
+          • {item}
+        </Text>
+      ))}
       <Text style={styles.sectionTitle}>Modo de preparo</Text>
       <Text style={styles.instructions}>{recipe.strInstructions}</Text>
     </ScrollView>
@@ -101,7 +121,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginTop: 8,
     marginBottom: 8,
+  },
+  ingredient: {
+    fontSize: 16,
+    color: '#333',
+    lineHeight: 24,
   },
   instructions: {
     fontSize: 16,
