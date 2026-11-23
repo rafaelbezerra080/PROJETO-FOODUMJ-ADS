@@ -1,11 +1,27 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import {
+  Keyboard,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  View,
+} from 'react-native';
 
 export default function HomeScreen({ navigation }) {
   const [searchText, setSearchText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
+  function handleTextChange(text) {
+    setSearchText(text);
+    if (errorMessage) {
+      setErrorMessage('');
+    }
+  }
+
   function handleSearch() {
+    Keyboard.dismiss();
     const term = searchText.trim();
     if (!term) {
       setErrorMessage('Digite o nome de uma receita para pesquisar.');
@@ -16,28 +32,37 @@ export default function HomeScreen({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>FoodUMJ: Receitas</Text>
-      <Text style={styles.subtitle}>Encontre sua próxima receita</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Digite o nome da receita"
-        value={searchText}
-        onChangeText={setSearchText}
-        onSubmitEditing={handleSearch}
-        returnKeyType="search"
-      />
-      {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
-      <TouchableOpacity style={styles.button} onPress={handleSearch}>
-        <Text style={styles.buttonText}>Pesquisar</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.favoritesButton}
-        onPress={() => navigation.navigate('Favorites')}
-      >
-        <Text style={styles.favoritesButtonText}>Ver favoritos</Text>
-      </TouchableOpacity>
-    </View>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <Text style={styles.title}>FoodUMJ: Receitas</Text>
+        <Text style={styles.subtitle}>Encontre sua próxima receita</Text>
+        <TextInput
+          style={styles.input}
+          placeholder="Digite o nome da receita"
+          value={searchText}
+          onChangeText={handleTextChange}
+          onSubmitEditing={handleSearch}
+          returnKeyType="search"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        {errorMessage ? <Text style={styles.error}>{errorMessage}</Text> : null}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleSearch}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.buttonText}>Pesquisar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.favoritesButton}
+          onPress={() => navigation.navigate('Favorites')}
+          activeOpacity={0.7}
+        >
+          <Text style={styles.favoritesButtonText}>Ver favoritos</Text>
+        </TouchableOpacity>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 

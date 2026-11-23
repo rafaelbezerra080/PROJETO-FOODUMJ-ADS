@@ -13,6 +13,7 @@ import { getRecipeById } from '../services/mealApi';
 import { useFavorites } from '../context/FavoritesContext';
 
 function extractIngredients(recipe) {
+  if (!recipe) return [];
   const ingredients = [];
   for (let i = 1; i <= 20; i += 1) {
     const ingredient = recipe[`strIngredient${i}`];
@@ -27,13 +28,18 @@ function extractIngredients(recipe) {
 }
 
 export default function RecipeDetailsScreen({ route }) {
-  const { idMeal } = route.params;
+  const { idMeal } = route.params || {};
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   async function loadRecipe() {
+    if (!idMeal) {
+      setError('Identificador de receita inválido.');
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -63,7 +69,11 @@ export default function RecipeDetailsScreen({ route }) {
     return (
       <View style={styles.center}>
         <Text style={styles.error}>{error}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={loadRecipe}>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={loadRecipe}
+          activeOpacity={0.8}
+        >
           <Text style={styles.retryButtonText}>Tentar novamente</Text>
         </TouchableOpacity>
       </View>
@@ -78,37 +88,42 @@ export default function RecipeDetailsScreen({ route }) {
     );
   }
 
+  const favorite = isFavorite(recipe.idMeal);
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <Image source={{ uri: recipe.strMealThumb }} style={styles.image} />
+      <Image
+        source={{ uri: recipe.strMealThumb }}
+        style={styles.image}
+        resizeMode="cover"
+      />
       <Text style={styles.title}>{recipe.strMeal}</Text>
       <TouchableOpacity
         style={[
           styles.favoriteButton,
-          isFavorite(recipe.idMeal) && styles.favoriteButtonActive,
+          favorite && styles.favoriteButtonActive,
         ]}
         onPress={() => {
-          if (isFavorite(recipe.idMeal)) {
+          if (favorite) {
             removeFavorite(recipe.idMeal);
           } else {
             addFavorite(recipe);
           }
         }}
+        activeOpacity={0.8}
       >
         <Text
           style={[
             styles.favoriteButtonText,
-            isFavorite(recipe.idMeal) && styles.favoriteButtonTextActive,
+            favorite && styles.favoriteButtonTextActive,
           ]}
         >
-          {isFavorite(recipe.idMeal)
-            ? 'Remover dos favoritos'
-            : 'Adicionar aos favoritos'}
+          {favorite ? 'Remover dos favoritos' : 'Adicionar aos favoritos'}
         </Text>
       </TouchableOpacity>
       <Text style={styles.sectionTitle}>Ingredientes</Text>
-      {extractIngredients(recipe).map((item) => (
-        <Text key={item} style={styles.ingredient}>
+      {extractIngredients(recipe).map((item, index) => (
+        <Text key={`${item}-${index}`} style={styles.ingredient}>
           • {item}
         </Text>
       ))}
@@ -138,6 +153,7 @@ const styles = StyleSheet.create({
     height: 220,
     borderRadius: 8,
     marginBottom: 16,
+    backgroundColor: '#f0f0f0',
   },
   title: {
     fontSize: 22,

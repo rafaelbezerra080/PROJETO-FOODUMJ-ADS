@@ -15,23 +15,31 @@ export default function FavoritesScreen({ navigation }) {
 
   function renderItem({ item }) {
     return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => navigation.navigate('Details', { idMeal: item.idMeal })}
-      >
-        <Image source={{ uri: item.strMealThumb }} style={styles.image} />
-        <View style={styles.cardContent}>
-          <Text style={styles.name} numberOfLines={2}>
-            {item.strMeal}
-          </Text>
-          <TouchableOpacity
-            style={styles.removeButton}
-            onPress={() => removeFavorite(item.idMeal)}
-          >
-            <Text style={styles.removeButtonText}>Remover</Text>
-          </TouchableOpacity>
-        </View>
-      </TouchableOpacity>
+      <View style={styles.card}>
+        <TouchableOpacity
+          style={styles.cardInfo}
+          onPress={() => navigation.navigate('Details', { idMeal: item.idMeal })}
+          activeOpacity={0.7}
+        >
+          <Image
+            source={{ uri: item.strMealThumb }}
+            style={styles.image}
+            resizeMode="cover"
+          />
+          <View style={styles.cardContent}>
+            <Text style={styles.name} numberOfLines={2}>
+              {item.strMeal}
+            </Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.removeButton}
+          onPress={() => removeFavorite(item.idMeal)}
+          activeOpacity={0.8}
+        >
+          <Text style={styles.removeButtonText}>Remover</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -39,10 +47,12 @@ export default function FavoritesScreen({ navigation }) {
     <View style={styles.container}>
       <FlatList
         data={favorites}
-        keyExtractor={(item) => item.idMeal}
+        keyExtractor={(item) => String(item.idMeal)}
         renderItem={renderItem}
         ListEmptyComponent={
-          <Text style={styles.empty}>Nenhuma receita favorita ainda</Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.empty}>Nenhuma receita favorita ainda</Text>
+          </View>
         }
         contentContainerStyle={styles.list}
       />
@@ -59,6 +69,10 @@ const styles = StyleSheet.create({
   list: {
     flexGrow: 1,
   },
+  emptyContainer: {
+    paddingVertical: 32,
+    alignItems: 'center',
+  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -69,22 +83,27 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
   },
+  cardInfo: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   image: {
     width: 72,
     height: 72,
     borderRadius: 8,
     marginRight: 12,
+    backgroundColor: '#f0f0f0',
   },
   cardContent: {
     flex: 1,
+    paddingRight: 8,
   },
   name: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 8,
   },
   removeButton: {
-    alignSelf: 'flex-start',
     backgroundColor: '#e23744',
     borderRadius: 6,
     paddingVertical: 6,

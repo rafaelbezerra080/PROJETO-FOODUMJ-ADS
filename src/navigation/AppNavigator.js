@@ -18,6 +18,7 @@ export default function AppNavigator() {
           headerStyle: { backgroundColor: '#e23744' },
           headerTintColor: '#fff',
           headerTitleStyle: { fontWeight: 'bold' },
+          headerBackTitle: 'Voltar',
         }}
       >
         <Stack.Screen

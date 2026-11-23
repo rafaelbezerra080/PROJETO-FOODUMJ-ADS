@@ -12,7 +12,7 @@ import RecipeCard from '../components/RecipeCard';
 import { searchRecipes } from '../services/mealApi';
 
 export default function ResultsScreen({ navigation, route }) {
-  const { term } = route.params;
+  const { term = '' } = route.params || {};
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -47,7 +47,11 @@ export default function ResultsScreen({ navigation, route }) {
     return (
       <View style={styles.center}>
         <Text style={styles.error}>{error}</Text>
-        <TouchableOpacity style={styles.retryButton} onPress={loadRecipes}>
+        <TouchableOpacity
+          style={styles.retryButton}
+          onPress={loadRecipes}
+          activeOpacity={0.8}
+        >
           <Text style={styles.retryButtonText}>Tentar novamente</Text>
         </TouchableOpacity>
       </View>
@@ -59,12 +63,13 @@ export default function ResultsScreen({ navigation, route }) {
       <TouchableOpacity
         style={styles.favoritesButton}
         onPress={() => navigation.navigate('Favorites')}
+        activeOpacity={0.7}
       >
         <Text style={styles.favoritesButtonText}>Ver favoritos</Text>
       </TouchableOpacity>
       <FlatList
         data={recipes}
-        keyExtractor={(item) => item.idMeal}
+        keyExtractor={(item) => String(item.idMeal)}
         renderItem={({ item }) => (
           <RecipeCard
             recipe={item}
@@ -72,11 +77,14 @@ export default function ResultsScreen({ navigation, route }) {
           />
         )}
         ListEmptyComponent={
-          <Text style={styles.info}>
-            Nenhuma receita encontrada para "{term}".
-          </Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.info}>
+              Nenhuma receita encontrada para "{term}".
+            </Text>
+          </View>
         }
         contentContainerStyle={styles.list}
+        keyboardShouldPersistTaps="handled"
       />
     </View>
   );
@@ -97,6 +105,10 @@ const styles = StyleSheet.create({
   },
   list: {
     flexGrow: 1,
+  },
+  emptyContainer: {
+    paddingVertical: 32,
+    alignItems: 'center',
   },
   info: {
     fontSize: 16,
