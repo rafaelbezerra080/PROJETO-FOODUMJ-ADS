@@ -163,34 +163,35 @@ export default function RecipeDetailsScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa',
   },
   content: {
     padding: 16,
   },
   center: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
   },
   image: {
     width: '100%',
-    height: 220,
-    borderRadius: 8,
+    height: 230,
+    borderRadius: 12,
     marginBottom: 16,
     backgroundColor: '#f0f0f0',
   },
   title: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 16,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 8,
+    color: '#e23744',
+    marginTop: 12,
     marginBottom: 8,
   },
   ingredient: {
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     backgroundColor: '#e23744',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 24,
   },
@@ -229,7 +230,7 @@ const styles = StyleSheet.create({
   favoriteButton: {
     borderWidth: 2,
     borderColor: '#e23744',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 24,
     alignItems: 'center',

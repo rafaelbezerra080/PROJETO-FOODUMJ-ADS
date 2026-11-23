@@ -52,6 +52,9 @@ export default function FavoritesScreen({ navigation }) {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.empty}>Nenhuma receita favorita ainda</Text>
+            <Text style={styles.emptySub}>
+              Favorite receitas nos detalhes para vê-las aqui.
+            </Text>
           </View>
         }
         contentContainerStyle={styles.list}
@@ -63,7 +66,7 @@ export default function FavoritesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa',
     padding: 16,
   },
   list: {
@@ -77,11 +80,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    borderRadius: 8,
+    borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#f0e9e9',
     padding: 12,
     marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
   cardInfo: {
     flex: 1,
@@ -105,7 +113,7 @@ const styles = StyleSheet.create({
   },
   removeButton: {
     backgroundColor: '#e23744',
-    borderRadius: 6,
+    borderRadius: 8,
     paddingVertical: 6,
     paddingHorizontal: 12,
   },
@@ -116,8 +124,15 @@ const styles = StyleSheet.create({
   },
   empty: {
     fontSize: 16,
+    fontWeight: '600',
     color: '#666',
     textAlign: 'center',
     marginTop: 32,
+  },
+  emptySub: {
+    fontSize: 14,
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 8,
   },
 });

@@ -119,12 +119,12 @@ export default function ResultsScreen({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa',
     padding: 16,
   },
   center: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fafafa',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
@@ -150,7 +150,7 @@ const styles = StyleSheet.create({
   },
   retryButton: {
     backgroundColor: '#e23744',
-    borderRadius: 8,
+    borderRadius: 12,
     paddingVertical: 12,
     paddingHorizontal: 24,
   },
@@ -167,5 +167,6 @@ const styles = StyleSheet.create({
   favoritesButtonText: {
     color: '#e23744',
     fontSize: 16,
+    fontWeight: '600',
   },
 });
