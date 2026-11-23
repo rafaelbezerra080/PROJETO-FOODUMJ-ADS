@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 import { getRecipeById } from '../services/mealApi';
+import { useFavorites } from '../context/FavoritesContext';
 
 function extractIngredients(recipe) {
   const ingredients = [];
@@ -30,6 +31,7 @@ export default function RecipeDetailsScreen({ route }) {
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { addFavorite, removeFavorite, isFavorite } = useFavorites();
 
   async function loadRecipe() {
     setLoading(true);
@@ -80,6 +82,30 @@ export default function RecipeDetailsScreen({ route }) {
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Image source={{ uri: recipe.strMealThumb }} style={styles.image} />
       <Text style={styles.title}>{recipe.strMeal}</Text>
+      <TouchableOpacity
+        style={[
+          styles.favoriteButton,
+          isFavorite(recipe.idMeal) && styles.favoriteButtonActive,
+        ]}
+        onPress={() => {
+          if (isFavorite(recipe.idMeal)) {
+            removeFavorite(recipe.idMeal);
+          } else {
+            addFavorite(recipe);
+          }
+        }}
+      >
+        <Text
+          style={[
+            styles.favoriteButtonText,
+            isFavorite(recipe.idMeal) && styles.favoriteButtonTextActive,
+          ]}
+        >
+          {isFavorite(recipe.idMeal)
+            ? 'Remover dos favoritos'
+            : 'Adicionar aos favoritos'}
+        </Text>
+      </TouchableOpacity>
       <Text style={styles.sectionTitle}>Ingredientes</Text>
       {extractIngredients(recipe).map((item) => (
         <Text key={item} style={styles.ingredient}>
@@ -156,5 +182,25 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  favoriteButton: {
+    borderWidth: 2,
+    borderColor: '#e23744',
+    borderRadius: 8,
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  favoriteButtonActive: {
+    backgroundColor: '#e23744',
+  },
+  favoriteButtonText: {
+    color: '#e23744',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  favoriteButtonTextActive: {
+    color: '#fff',
   },
 });
