@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
@@ -16,22 +16,46 @@ export default function ResultsScreen({ navigation, route }) {
   const [recipes, setRecipes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const isMounted = useRef(true);
 
   async function loadRecipes() {
-    setLoading(true);
-    setError('');
+    const cleanTerm = term ? term.trim() : '';
+    if (!cleanTerm) {
+      if (isMounted.current) {
+        setRecipes([]);
+        setLoading(false);
+      }
+      return;
+    }
+
+    if (isMounted.current) {
+      setLoading(true);
+      setError('');
+    }
+
     try {
-      const results = await searchRecipes(term);
-      setRecipes(results);
+      const results = await searchRecipes(cleanTerm);
+      if (isMounted.current) {
+        setRecipes(results);
+      }
     } catch (err) {
-      setError(err.message || 'Não foi possível carregar as receitas.');
+      if (isMounted.current) {
+        setError(err.message || 'Não foi possível carregar as receitas.');
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   }
 
   useEffect(() => {
+    isMounted.current = true;
     loadRecipes();
+
+    return () => {
+      isMounted.current = false;
+    };
   }, [term]);
 
   if (loading) {
@@ -79,7 +103,9 @@ export default function ResultsScreen({ navigation, route }) {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.info}>
-              Nenhuma receita encontrada para "{term}".
+              {term.trim()
+                ? `Nenhuma receita encontrada para "${term.trim()}".`
+                : 'Nenhum termo de pesquisa informado.'}
             </Text>
           </View>
         }

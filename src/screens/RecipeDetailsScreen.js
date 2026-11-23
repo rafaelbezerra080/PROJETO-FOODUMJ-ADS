@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Image,
@@ -27,33 +27,51 @@ function extractIngredients(recipe) {
   return ingredients;
 }
 
-export default function RecipeDetailsScreen({ route }) {
+export default function RecipeDetailsScreen({ navigation, route }) {
   const { idMeal } = route.params || {};
   const [recipe, setRecipe] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const { addFavorite, removeFavorite, isFavorite } = useFavorites();
+  const isMounted = useRef(true);
 
   async function loadRecipe() {
     if (!idMeal) {
-      setError('Identificador de receita inválido.');
-      setLoading(false);
+      if (isMounted.current) {
+        setError('Identificador de receita inválido.');
+        setLoading(false);
+      }
       return;
     }
-    setLoading(true);
-    setError('');
+
+    if (isMounted.current) {
+      setLoading(true);
+      setError('');
+    }
+
     try {
       const result = await getRecipeById(idMeal);
-      setRecipe(result);
+      if (isMounted.current) {
+        setRecipe(result);
+      }
     } catch (err) {
-      setError(err.message || 'Não foi possível carregar a receita.');
+      if (isMounted.current) {
+        setError(err.message || 'Não foi possível carregar a receita.');
+      }
     } finally {
-      setLoading(false);
+      if (isMounted.current) {
+        setLoading(false);
+      }
     }
   }
 
   useEffect(() => {
+    isMounted.current = true;
     loadRecipe();
+
+    return () => {
+      isMounted.current = false;
+    };
   }, [idMeal]);
 
   if (loading) {
@@ -84,6 +102,15 @@ export default function RecipeDetailsScreen({ route }) {
     return (
       <View style={styles.center}>
         <Text style={styles.info}>Receita não encontrada.</Text>
+        {navigation?.canGoBack?.() ? (
+          <TouchableOpacity
+            style={styles.retryButton}
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.retryButtonText}>Voltar</Text>
+          </TouchableOpacity>
+        ) : null}
       </View>
     );
   }
